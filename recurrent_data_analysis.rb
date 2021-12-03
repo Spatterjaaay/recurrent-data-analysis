@@ -7,8 +7,6 @@ def charged_above(charge_percent, csv_path)
   cars_charged_above = Set.new
 
   CSV.read(csv_path, headers: true).each do |car|
-    # need to check if car has already been added to final tally
-    # if cars charged above was already counted
     if car["charge_reading"] > charge_percent
       cars_charged_above << car["vehicle_id"]
     end
@@ -23,11 +21,7 @@ def average_daily_miles(vehicle_id, csv_path)
   last_odometer_reading = -1
 
   CSV.read(csv_path, headers: true).each do |car|
-    # need to count only delta of miles?
-    # multiple daily odometer readings, need to track days already counted
     # this code depends the dates are ordered to track the delta between that last odometer reading
-    # what happens when the odometer resets
-    #
     # TODO save first and last values
     if car["vehicle_id"] == vehicle_id
 
