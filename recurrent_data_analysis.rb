@@ -23,15 +23,21 @@ def average_daily_miles(vehicle_id, csv_path)
 
   CSV.read(csv_path, headers: true).each do |car|
     # this code depends the dates are ordered
+    if !first_day
+      first_day = DateTime.parse(car["created_at"]).to_date
+    elsif first_day > DateTime.parse(car["created_at"]).to_date
+      first_day = DateTime.parse(car["created_at"]).to_date
+    end
+
+    if !last_day
+      last_day = DateTime.parse(car["created_at"]).to_date
+    elsif last_day < DateTime.parse(car["created_at"]).to_date
+      last_day = DateTime.parse(car["created_at"]).to_date
+    end
 
     if car["vehicle_id"] == vehicle_id
       first_odometer_reading = car["odometer"].to_f unless first_odometer_reading
       last_odometer_reading = car["odometer"].to_f
-
-      # this solution starts the day counting when the vehicle sends its first data,
-      # which is not necessarily the earliest day entry for the entire dataset
-      first_day = DateTime.parse(car["created_at"]).to_date unless first_day
-      last_day = DateTime.parse(car["created_at"]).to_date
     end
   end
   # this will turn funky if the odometer resets, will add negative miles
