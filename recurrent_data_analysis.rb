@@ -16,28 +16,27 @@ def charged_above(charge_percent, csv_path)
 end
 
 def average_daily_miles(vehicle_id, csv_path)
-  miles_driven = 0.0
-  days = Set.new
-  last_odometer_reading = -1
+  first_day = nil
+  last_day = nil
+  first_odometer_reading = nil
+  last_odometer_reading = nil
 
   CSV.read(csv_path, headers: true).each do |car|
-    # this code depends the dates are ordered to track the delta between that last odometer reading
-    # TODO save first and last values
+    # this code depends the dates are ordered
+
     if car["vehicle_id"] == vehicle_id
+      first_odometer_reading = car["odometer"].to_f unless first_odometer_reading
+      last_odometer_reading = car["odometer"].to_f
 
-      if last_odometer_reading == -1
-        last_odometer_reading = car["odometer"].to_i
-      end
-      # this will turn funky if the odometer resets, will add negative miles
-      miles_driven += car["odometer"].to_i - last_odometer_reading
-      last_odometer_reading = car["odometer"].to_i
-
-      days << DateTime.parse(car["created_at"]).to_date
+      # this solution starts the day counting when the vehicle sends its first data,
+      # which is not necessarily the earliest day entry for the entire dataset
+      first_day = DateTime.parse(car["created_at"]).to_date unless first_day
+      last_day = DateTime.parse(car["created_at"]).to_date
     end
   end
-
+  # this will turn funky if the odometer resets, will add negative miles
   # TODO handle 0
-  puts miles_driven / days.size
+  puts (last_odometer_reading - first_odometer_reading) / (last_day - first_day).to_i
 end
 
 def recurrent_data_analysis(csv_path, query, arg)
