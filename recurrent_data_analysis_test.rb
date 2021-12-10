@@ -6,11 +6,22 @@ Minitest::Reporters.use!
 
 describe "charged_above" do
   it "returns the correct number of cars charged above given percentage" do
-    expect(charged_above("0.4", 'ev_data.csv')).must_equal 5
-    expect(charged_above("0.1", 'ev_data.csv')).must_equal 5
-    expect(charged_above("0.0", 'ev_data.csv')).must_equal 5
-    expect(charged_above("1.0", 'ev_data.csv')).must_equal 0
-    expect(charged_above("0.99", 'ev_data.csv')).must_equal 4
+    answers = [["0.4", 5], ["1.0", 0], ["0.99", 4]]
+    answers.each { |arg, result|
+      expect(charged_above(arg, "ev_data.csv")).must_equal result
+    }
+  end
+
+  it "raises an error for bad percent argument" do
+    expect {
+      charged_above("2", "ev_data.csv")
+    }.must_raise ArgumentError
+  end
+
+  it "raises an error for a bad file" do
+    expect {
+      charged_above("1", "data.csv")
+    }.must_raise Errno::ENOENT
   end
 end
 
