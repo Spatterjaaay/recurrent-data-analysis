@@ -12,7 +12,7 @@ def charged_above(charge_percent, csv_path)
     end
   end
 
-  puts cars_charged_above.size
+  return cars_charged_above.size
 end
 
 def average_daily_miles(vehicle_id, csv_path)
@@ -43,16 +43,16 @@ def average_daily_miles(vehicle_id, csv_path)
   # this will turn funky if the odometer resets, will add negative miles
   # TODO handle 0
   # TODO handle no car with that ID, no data
-  puts (last_odometer_reading - first_odometer_reading) / (last_day - first_day).to_i
+  return (last_odometer_reading - first_odometer_reading) / (last_day - first_day).to_i
 end
 
 def recurrent_data_analysis(csv_path, query, arg)
 
   case query
   when "charged_above"
-    charged_above(arg, csv_path)
+    puts charged_above(arg, csv_path)
   when "average_daily_miles"
-    average_daily_miles(arg, csv_path)
+    puts average_daily_miles(arg, csv_path)
   else
     puts "Query doesn't exist, please ask for charged_above or average_daily_miles"
   end
