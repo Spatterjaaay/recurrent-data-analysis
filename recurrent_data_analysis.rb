@@ -6,6 +6,10 @@ require 'date'
 def charged_above(charge_percent, csv_path)
   cars_charged_above = Set.new
 
+  if charge_percent < "0.0" || charge_percent > "1.0"
+    raise ArgumentError.new("Percent value must be between 0.0 and 1.0")
+  end
+
   CSV.read(csv_path, headers: true).each do |car|
     if car["charge_reading"] > charge_percent
       cars_charged_above << car["vehicle_id"]
@@ -22,15 +26,17 @@ def average_daily_miles(vehicle_id, csv_path)
   last_odometer_reading = nil
 
   CSV.read(csv_path, headers: true).each do |car|
+    # Average is taken over the period of the data set,
+    # not over the values that match vehicle_id specifically
     if !first_day
       first_day = DateTime.parse(car["created_at"]).to_date
-    elsif first_day > DateTime.parse(car["created_at"]).to_date
+    elsif DateTime.parse(car["created_at"]).to_date < first_day
       first_day = DateTime.parse(car["created_at"]).to_date
     end
 
     if !last_day
       last_day = DateTime.parse(car["created_at"]).to_date
-    elsif last_day < DateTime.parse(car["created_at"]).to_date
+    elsif DateTime.parse(car["created_at"]).to_date > last_day
       last_day = DateTime.parse(car["created_at"]).to_date
     end
 
@@ -43,11 +49,10 @@ def average_daily_miles(vehicle_id, csv_path)
   # this will turn funky if the odometer resets, will add negative miles
   # TODO handle 0
   # TODO handle no car with that ID, no data
-  return (last_odometer_reading - first_odometer_reading) / (last_day - first_day).to_i
+  return (last_odometer_reading - first_odometer_reading) / (last_day - first_day + 1).to_i
 end
 
 def recurrent_data_analysis(csv_path, query, arg)
-
   case query
   when "charged_above"
     puts charged_above(arg, csv_path)
