@@ -46,9 +46,12 @@ def average_daily_miles(vehicle_id, csv_path)
       last_odometer_reading = car["odometer"].to_f
     end
   end
+  # there was no car in dataset with specified vehicle_id
+  if first_odometer_reading == nil
+    return 0
+  end
+
   # this will turn funky if the odometer resets, will add negative miles
-  # TODO handle 0
-  # TODO handle no car with that ID, no data
   return (last_odometer_reading - first_odometer_reading) / (last_day - first_day + 1).to_i
 end
 
@@ -64,10 +67,10 @@ def recurrent_data_analysis(csv_path, query, arg)
 end
 
 def main
-  if ARGV.length == 0 # We want to make sure we have an argument.
+  if ARGV.length != 3 # We want to make sure we have an argument.
     puts "Please provide path to the data and analysis method!"
   else
-    csv_path = ARGV[0] || 'ev_data.csv'
+    csv_path = ARGV[0]
     query = ARGV[1]
     arg = ARGV[2]
     recurrent_data_analysis(csv_path, query, arg)
