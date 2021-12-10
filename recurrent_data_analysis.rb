@@ -22,7 +22,6 @@ def average_daily_miles(vehicle_id, csv_path)
   last_odometer_reading = nil
 
   CSV.read(csv_path, headers: true).each do |car|
-    # this code depends the dates are ordered
     if !first_day
       first_day = DateTime.parse(car["created_at"]).to_date
     elsif first_day > DateTime.parse(car["created_at"]).to_date
@@ -35,6 +34,7 @@ def average_daily_miles(vehicle_id, csv_path)
       last_day = DateTime.parse(car["created_at"]).to_date
     end
 
+    # this code depends on the values being ordered linearly in time
     if car["vehicle_id"] == vehicle_id
       first_odometer_reading = car["odometer"].to_f unless first_odometer_reading
       last_odometer_reading = car["odometer"].to_f
@@ -42,6 +42,7 @@ def average_daily_miles(vehicle_id, csv_path)
   end
   # this will turn funky if the odometer resets, will add negative miles
   # TODO handle 0
+  # TODO handle no car with that ID, no data
   puts (last_odometer_reading - first_odometer_reading) / (last_day - first_day).to_i
 end
 
