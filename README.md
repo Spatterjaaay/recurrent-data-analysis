@@ -3,8 +3,7 @@
 A command line program that performs queries on data collected from people's electric vehicles in the form of CSV.
 
 ## Requirements:
-* [Ruby 2.4.0](link)
-* [RubyGems 2.7.6](link)
+* [Ruby 3.0.3](https://www.ruby-lang.org/en/downloads/)
 
 ## Installing dependencies:
 ```
@@ -36,3 +35,19 @@ assumptions
 improvements
 
 Ticket
+
+A User story:
+As a user of this command line application I want to know the number of cars that were not driven at a given date.
+
+Task:
+As a developer we should create a function that takes in user provided date as a parameter and return number of cars not driven on that specific date, based on an odometer reading value from a given dataset.
+The function needs to appropriately handle user input that can have various formats and handle conditions such as date not found, and differentitate between no data for any car on that day and all cars were driven.
+
+Acceptance criteria:
+
+Discussion:
+Some clarification is necessary to further discuss with the product owner/team. It should be established what is the underlying motivation for this feature, that will inform handling of corner cases and exceptions. 
+A further dicussion is also needed to identify acceptable criteria for a car that was not driven on a user provided date.
+For example, a specific car can have several datapoints present for each day, only one per day, or once per several days. The only guaranteed car that was not driven is when we have multiple datapoints across three consecutive days say the odometer reading has not changed and therefore the car was not driven on the middle date.
+If the odometer reading shows a change between two consecutive days, it is unclear on which day the car actually moved. The gap is even wider if we do not have data for consecutive days. If we use odometer data over several days to identify a car that has moved, it will be also necessary to account for earliest and latest odometer reading in the dataset, as they have no predecessor or follower.
+It is necessary for handling this use case to know how to interpret the data.
