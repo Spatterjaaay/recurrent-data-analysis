@@ -39,6 +39,9 @@ The following options are available:
 - 
 
 ## Improvements
+- automate tests to run with CI and Rake, add integration tests
+- write an enveloping class and store CSV data file as an instance variable
+- depending on future use the command line app could be turned into an API to be able to provide the results programmatically to wider audience
 
 ## Ticket to implement a new query
 
