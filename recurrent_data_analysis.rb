@@ -3,6 +3,8 @@ require 'csv'
 require 'set'
 require 'date'
 
+# returns the number of vehicles that reported at least one `charge_reading` above a given %
+# over the whole time period
 def charged_above(charge_percent, csv_path)
   cars_charged_above = Set.new
 
@@ -19,6 +21,7 @@ def charged_above(charge_percent, csv_path)
   return cars_charged_above.size
 end
 
+# returns the average daily miles for a given vehicle over the course of the time period of the dataset
 def average_daily_miles(vehicle_id, csv_path)
   first_day = nil
   last_day = nil
@@ -26,7 +29,7 @@ def average_daily_miles(vehicle_id, csv_path)
   last_odometer_reading = nil
 
   CSV.read(csv_path, headers: true).each do |car|
-    # Average is taken over the period of the data set,
+    # avg is taken over the period of the data set,
     # not over the values that match vehicle_id specifically
     if !first_day
       first_day = DateTime.parse(car["created_at"]).to_date
@@ -51,7 +54,7 @@ def average_daily_miles(vehicle_id, csv_path)
     return 0
   end
 
-  # this will turn funky if the odometer resets, will add negative miles
+  # this will turn funky if the odometer rolls over, will add negative miles
   return (last_odometer_reading - first_odometer_reading) / (last_day - first_day + 1).to_i
 end
 
@@ -67,8 +70,8 @@ def recurrent_data_analysis(csv_path, query, arg)
 end
 
 def main
-  if ARGV.length != 3 # We want to make sure we have an argument.
-    puts "Please provide path to the data and analysis method!"
+  if ARGV.length != 3 # We want to make sure we have 3 arguments.
+    puts "Please provide path to the data, an analysis method and an argument!"
   else
     csv_path = ARGV[0]
     query = ARGV[1]
