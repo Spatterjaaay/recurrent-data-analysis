@@ -29,25 +29,44 @@ The following options are available:
 1. clone this repository from GitHub, or download files to your system
 2. navigate to the folder where the recurrent-data-analysis.rb is saved and run, for example, ```ruby recurrent_data_analysis.rb ev_data.csv average_daily_miles cat-car```
 
-how to make script executable
-sample input/output
-assumptions
-improvements
+## To run tests:
+1. navigate to the folder where the recurrent-data-analysis.rb is saved and run ```ruby recurrent_data_analysis_test.rb```
 
-Ticket
+## Assumptions and Decisions
+- the car data in the dataset is ordered linearly in time
+- the program currently runs the interactive portion requiring user input as a command line application only
+- `average_daily_miles` function doesn't currently handle the edge case of the odometer rolling over to 0
+- 
 
-A User story:
-As a user of this command line application I want to know the number of cars that were not driven at a given date.
+## Improvements
 
-Task:
-As a developer we should create a function that takes in user provided date as a parameter and return number of cars not driven on that specific date, based on an odometer reading value from a given dataset.
-The function needs to appropriately handle user input that can have various formats and handle conditions such as date not found, and differentitate between no data for any car on that day and all cars were driven.
+## Ticket to implement a new query
 
-Acceptance criteria:
+### User story:
+As a user of this command line application I want to know the number of cars that were not driven on a given date.
 
-Discussion:
-Some clarification is necessary to further discuss with the product owner/team. It should be established what is the underlying motivation for this feature, that will inform handling of corner cases and exceptions. 
-A further dicussion is also needed to identify acceptable criteria for a car that was not driven on a user provided date.
-For example, a specific car can have several datapoints present for each day, only one per day, or once per several days. The only guaranteed car that was not driven is when we have multiple datapoints across three consecutive days say the odometer reading has not changed and therefore the car was not driven on the middle date.
-If the odometer reading shows a change between two consecutive days, it is unclear on which day the car actually moved. The gap is even wider if we do not have data for consecutive days. If we use odometer data over several days to identify a car that has moved, it will be also necessary to account for earliest and latest odometer reading in the dataset, as they have no predecessor or follower.
-It is necessary for handling this use case to know how to interpret the data.
+### Task:
+As a developer we should extend the command line application to accept a new query `drove_nowhere` along with a date argument. Then we should implement the `drove_nowhere` function that:
+* takes in a user provided date argument as a parameter
+* returns a String representing the number of cars not driven on that specific date
+* uses an odometer value from a given dataset as the bassis for the calculation.
+
+The function needs to appropriately handle user input that can have various formats and handle edge cases such as the date falls outside the data set and exceptions, such as bad argument and no dataset file.
+
+### Acceptance criteria:
+* the function accepts a String value that is parsed as a date
+* the function returns a numerical value expressing the number of cars not driven on the given date
+* the function returns a String "no car data available for selected date" in the case of date falling outside the datatset.
+
+### Discussion & Assumptions:
+This ticket makes some assumptions about the desired implementation. It provides a suggestion for the return values, using the limited knowledge I have, to provide a more realistic ticket example consistent with the already written code. Were it a ticket at Recurrent, ideally there would be a discussion with the product owner/team first to clarify the goal and context of the task that would inform the output of various edge case and exceptions.  
+
+Another important point for clarification would be the reliable identification of a `car not driven`. Based on the dataset provided in the exercise, a specific car can have several datapoints present for each day, only one per day, or once per several days. We can only guarantee a car **was** or **was not** not driven under certain conditions:
+* when at least one datapoint across three consecutive days show the odometer reading has not changed (car was not driven on the middle day)
+* when two or more datapoints in one day show a change in the odometer reading (the car was driven on that day)
+
+Outside of those two conditions, if the odometer reading shows a change between two consecutive days, it is unclear on which day the car actually moved. The problem is compounded when there are missing odometer readings for the entire day, either for the given day or the days directly adjacent to it.
+
+One approach I would suggest would be to return number of cars that we have the most confidence did not drive on that day (and not count cases where we are not 100% sure) by checking the last odometer measurement of the day before and first odometer measurement of the day after. In case one of the two is missing (which would be the case for example the beginning/end of the dataset) we substitute the mising odometer measurement with either first of last measurement of the given day.
+
+
